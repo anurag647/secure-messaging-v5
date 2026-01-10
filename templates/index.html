@@ -1,0 +1,1774 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Messaging v5.0 | Protected Security</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-card: rgba(30, 15, 20, 0.9);
+            --accent-primary: #ff3b3b;
+            --accent-secondary: #ff6b6b;
+            --accent-success: #00ff88;
+            --accent-danger: #ff1744;
+            --accent-warning: #ffab00;
+            --text-primary: #ffffff;
+            --text-secondary: #b0a0a5;
+            --gradient-primary: linear-gradient(135deg, #ff3b3b, #ff0844);
+            --gradient-gold: linear-gradient(135deg, #ff6b6b, #ee0979);
+            --gradient-danger: linear-gradient(135deg, #ff1744, #d50000);
+            --gradient-shield: linear-gradient(135deg, #ff3b3b, #ff6b6b, #ff0844);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* 3D Canvas Background */
+        #threejs-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+
+        .tech-badges {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-primary);
+        }
+
+        .badge.new {
+            border-color: var(--accent-success);
+            color: var(--accent-success);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 15px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            background: rgba(20, 30, 48, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .tab:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .tab.active {
+            background: var(--gradient-primary);
+            border-color: transparent;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            backdrop-filter: blur(20px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .card-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .card-icon.gold {
+            background: var(--gradient-gold);
+        }
+
+        .card-icon.danger {
+            background: var(--gradient-danger);
+        }
+
+        .card-icon.success {
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .card-step {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        textarea,
+        input[type="text"],
+        input[type="password"],
+        input[type="number"],
+        select {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 8px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            resize: vertical;
+        }
+
+        textarea:focus,
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .btn-gold {
+            background: var(--gradient-gold);
+            color: #000;
+        }
+
+        .btn-danger {
+            background: var(--gradient-danger);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            color: #000;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .output-box {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            word-break: break-all;
+            position: relative;
+        }
+
+        .output-label {
+            position: absolute;
+            top: -8px;
+            left: 8px;
+            background: var(--bg-dark);
+            padding: 0 5px;
+            font-size: 0.6rem;
+            color: var(--accent-primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-weight: 600;
+            margin-top: 8px;
+            font-size: 0.8rem;
+        }
+
+        .status-success {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--accent-success);
+            color: var(--accent-success);
+        }
+
+        .status-error {
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid var(--accent-danger);
+            color: var(--accent-danger);
+        }
+
+        .key-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        .key-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent-danger);
+        }
+
+        .key-indicator.active {
+            background: var(--accent-success);
+            box-shadow: 0 0 10px var(--accent-success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 5px var(--accent-success);
+            }
+
+            50% {
+                box-shadow: 0 0 20px var(--accent-success);
+            }
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .comparison-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px;
+            border-radius: 5px;
+        }
+
+        .comparison-label {
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-bottom: 3px;
+        }
+
+        .comparison-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            word-break: break-all;
+            color: var(--accent-secondary);
+        }
+
+        /* 3D Animation Status */
+        #animation-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--accent-primary);
+            border-radius: 10px;
+            padding: 15px;
+            z-index: 100;
+            font-size: 0.85rem;
+            backdrop-filter: blur(10px);
+            min-width: 200px;
+        }
+
+        #animation-status h4 {
+            color: var(--accent-primary);
+            margin-bottom: 8px;
+        }
+
+        #animation-status .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 5px 0;
+            color: var(--text-secondary);
+        }
+
+        #animation-status .step.active {
+            color: var(--accent-success);
+        }
+
+        #animation-status .step.done {
+            color: var(--accent-primary);
+        }
+
+        .step-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-secondary);
+        }
+
+        .step.active .step-indicator {
+            background: var(--accent-success);
+            animation: pulse 1s infinite;
+        }
+
+        .step.done .step-indicator {
+            background: var(--accent-primary);
+        }
+
+        /* History Styles */
+        .history-item {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border-left: 3px solid var(--accent-primary);
+            font-size: 0.8rem;
+        }
+
+        .history-item.decrypt {
+            border-left-color: var(--accent-success);
+        }
+
+        .history-item.sign {
+            border-left-color: var(--accent-warning);
+        }
+
+        .history-time {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            #animation-status {
+                display: none;
+            }
+        }
+
+        /* Protection Shield */
+        .protection-shield {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--gradient-primary);
+            padding: 8px 20px;
+            border-radius: 25px;
+            margin-bottom: 15px;
+            animation: shieldPulse 2s infinite;
+            box-shadow: 0 0 30px rgba(255, 59, 59, 0.5);
+        }
+
+        .shield-icon {
+            font-size: 1.5rem;
+            animation: shieldRotate 3s ease-in-out infinite;
+        }
+
+        .shield-text {
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            color: #fff;
+        }
+
+        @keyframes shieldPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(255, 59, 59, 0.5);
+            }
+
+            50% {
+                box-shadow: 0 0 40px rgba(255, 59, 59, 0.8);
+            }
+        }
+
+        @keyframes shieldRotate {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        /* Refresh Button */
+        .refresh-btn {
+            margin-top: 15px;
+            padding: 10px 25px;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 25px;
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 59, 59, 0.3);
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 59, 59, 0.5);
+        }
+
+        .refresh-btn:active {
+            transform: translateY(0);
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Security Score Dashboard */
+        .security-score-container {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .score-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: conic-gradient(var(--accent-primary) 0deg, var(--bg-dark) 0deg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 0 30px rgba(255, 59, 59, 0.3);
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: var(--bg-dark);
+            border-radius: 50%;
+        }
+
+        .score-value {
+            position: relative;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            z-index: 1;
+        }
+
+        .score-label {
+            position: relative;
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+            letter-spacing: 2px;
+            z-index: 1;
+        }
+
+        .score-details {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .score-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .item-icon {
+            font-size: 1rem;
+        }
+
+        .score-grade {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-success);
+        }
+
+        /* Header Buttons */
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--gradient-primary);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(255, 59, 59, 0.4);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--accent-primary);
+            border-radius: 15px;
+            padding: 25px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(255, 59, 59, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .shortcut-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .shortcut-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+
+        .shortcut-keys {
+            display: flex;
+            gap: 5px;
+        }
+
+        .key {
+            background: var(--gradient-primary);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+        }
+
+        /* Copy Button */
+        .copy-btn {
+            background: var(--gradient-gold);
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            color: #000;
+            font-weight: 600;
+            margin-left: 10px;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .copy-btn.copied {
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Three.js 3D Background -->
+    <div id="threejs-container"></div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">Copied to clipboard!</div>
+
+    <!-- Keyboard Shortcuts Modal -->
+    <div class="modal-overlay" id="shortcutsModal" onclick="closeShortcutsModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <span class="modal-title">⌨️ Keyboard Shortcuts</span>
+                <button class="modal-close" onclick="closeShortcutsModal()">&times;</button>
+            </div>
+            <div class="shortcut-list">
+                <div class="shortcut-item">
+                    <span>Generate Keys</span>
+                    <div class="shortcut-keys"><span class="key">Ctrl</span><span class="key">G</span></div>
+                </div>
+                <div class="shortcut-item">
+                    <span>Encrypt Message</span>
+                    <div class="shortcut-keys"><span class="key">Ctrl</span><span class="key">E</span></div>
+                </div>
+                <div class="shortcut-item">
+                    <span>Decrypt Message</span>
+                    <div class="shortcut-keys"><span class="key">Ctrl</span><span class="key">D</span></div>
+                </div>
+                <div class="shortcut-item">
+                    <span>Refresh App</span>
+                    <div class="shortcut-keys"><span class="key">Ctrl</span><span class="key">R</span></div>
+                </div>
+                <div class="shortcut-item">
+                    <span>Copy Encrypted</span>
+                    <div class="shortcut-keys"><span class="key">Ctrl</span><span class="key">C</span></div>
+                </div>
+                <div class="shortcut-item">
+                    <span>Show Shortcuts</span>
+                    <div class="shortcut-keys"><span class="key">?</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Animation Status Panel -->
+    <div id="animation-status" style="display: none;">
+        <h4>🔐 Encryption Flow</h4>
+        <div class="step" id="step-key">
+            <div class="step-indicator"></div> Key Generation
+        </div>
+        <div class="step" id="step-hash">
+            <div class="step-indicator"></div> Hash Calculation
+        </div>
+        <div class="step" id="step-aes">
+            <div class="step-indicator"></div> AES Encryption
+        </div>
+        <div class="step" id="step-rsa">
+            <div class="step-indicator"></div> RSA Key Wrap
+        </div>
+        <div class="step" id="step-send">
+            <div class="step-indicator"></div> Secure Transmit
+        </div>
+    </div>
+
+    <header>
+        <div class="protection-shield">
+            <span class="shield-icon">🛡️</span>
+            <span class="shield-text">PROTECTED</span>
+        </div>
+        <h1 class="logo">Secure Messaging <span class="version-badge">v5.0 SECURE</span></h1>
+        <p class="subtitle">🔒 Military-Grade Encryption with Real-Time Protection</p>
+        <div class="tech-badges">
+            <span class="badge">🛡️ RSA-2048</span>
+            <span class="badge">🔐 AES-256-GCM</span>
+            <span class="badge">🔑 SHA-512</span>
+            <span class="badge new">🛡️ PROTECTED</span>
+            <span class="badge new">📋 One-Click Copy</span>
+            <span class="badge new">⌨️ Shortcuts</span>
+        </div>
+        <div class="header-buttons">
+            <button class="refresh-btn" onclick="refreshApp()" title="Refresh Application (Ctrl+R)">
+                🔄 Refresh
+            </button>
+            <button class="refresh-btn" onclick="showKeyboardShortcuts()" title="Keyboard Shortcuts"
+                style="background: var(--gradient-gold);">
+                ⌨️ Shortcuts
+            </button>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('encrypt')">🔒 Encrypt</div>
+            <div class="tab" onclick="showTab('decrypt')">🔓 Decrypt</div>
+            <div class="tab" onclick="showTab('signature')">✍️ Signature</div>
+            <div class="tab" onclick="showTab('2fa')">🔐 2FA</div>
+            <div class="tab" onclick="showTab('history')">📜 History</div>
+        </div>
+
+        <!-- Encrypt Tab -->
+        <div id="tab-encrypt" class="tab-content active">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon success">🔑</div>
+                    <div>
+                        <h2 class="card-title">Initialize Security Layer</h2>
+                        <p class="card-step">RSA + AES + 2FA</p>
+                    </div>
+                </div>
+                <div class="key-status">
+                    <div class="key-indicator" id="keyIndicator"></div>
+                    <span id="keyStatusText">Keys Not Generated</span>
+                </div>
+                <div class="form-group">
+                    <label>Key Password (Optional)</label>
+                    <input type="password" id="keyPassword" placeholder="Protect your private key">
+                </div>
+                <button class="btn btn-success" id="generateBtn" onclick="generateKeys()">
+                    <span>⚡</span> Generate Keys
+                </button>
+            </div>
+
+            <!-- Security Score Dashboard -->
+            <div class="card" id="securityDashboard">
+                <div class="card-header">
+                    <div class="card-icon" style="background: var(--gradient-danger);">📊</div>
+                    <div>
+                        <h2 class="card-title">Security Score Dashboard</h2>
+                        <p class="card-step">Real-Time Protection Status</p>
+                    </div>
+                </div>
+                <div class="security-score-container">
+                    <div class="score-circle" id="scoreCircle">
+                        <span class="score-value" id="scoreValue">0</span>
+                        <span class="score-label">SCORE</span>
+                    </div>
+                    <div class="score-details">
+                        <div class="score-item">
+                            <span class="item-icon" id="keysIcon">❌</span>
+                            <span>Keys Generated</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="item-icon" id="tfaIcon">❌</span>
+                            <span>2FA Enabled</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="item-icon" id="passwordIcon">❌</span>
+                            <span>Password Protected</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="item-icon" id="aesIcon">❌</span>
+                            <span>AES Ready</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="updateSecurityScore()">🔄 Update Score</button>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📤</div>
+                        <div>
+                            <h2 class="card-title">Encrypt Message</h2>
+                            <p class="card-step">Hybrid RSA + AES-256-GCM</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Hash Algorithm</label>
+                        <select id="hashAlgoEncrypt">
+                            <option value="sha256" selected>SHA-256</option>
+                            <option value="sha512">SHA-512</option>
+                            <option value="md5">MD5</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Expiry (minutes, 0 = never)</label>
+                        <input type="number" id="expiryMinutes" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Secret Message</label>
+                        <textarea id="messageInput" rows="3" placeholder="Enter your message..."></textarea>
+                    </div>
+                    <button class="btn btn-primary" id="encryptBtn" onclick="encryptMessage()" disabled>
+                        <span>🔒</span> Encrypt
+                    </button>
+
+                    <div id="encryptOutput" style="display: none;">
+                        <div class="output-box">
+                            <span class="output-label">Hash</span>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: var(--accent-secondary); flex: 1;" id="hashDisplay"></div>
+                                <button class="copy-btn" onclick="copyToClipboard('hashDisplay', this)">📋 Copy</button>
+                            </div>
+                        </div>
+                        <div class="output-box" style="margin-top: 12px;">
+                            <span class="output-label">Encrypted Packet</span>
+                            <div style="display: flex; align-items: flex-start;">
+                                <div style="color: var(--accent-primary); max-height: 80px; overflow-y: auto; flex: 1;"
+                                    id="encryptedDisplay"></div>
+                                <button class="copy-btn" onclick="copyToClipboard('encryptedDisplay', this)">📋
+                                    Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📥</div>
+                        <div>
+                            <h2 class="card-title">Quick Decrypt</h2>
+                            <p class="card-step">Verify & Decrypt</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>2FA Code (if enabled)</label>
+                        <input type="text" id="totpCodeDecrypt" placeholder="6-digit code">
+                    </div>
+                    <div class="form-group">
+                        <label>Encrypted Packet</label>
+                        <textarea id="encryptedInput" rows="3" placeholder="Paste encrypted data..."></textarea>
+                    </div>
+                    <button class="btn btn-primary" id="decryptBtn" onclick="decryptMessage()" disabled>
+                        <span>🔓</span> Decrypt
+                    </button>
+
+                    <div id="decryptOutput" style="display: none;">
+                        <div class="output-box">
+                            <span class="output-label">Decrypted Message</span>
+                            <div style="color: var(--accent-success);" id="decryptedDisplay"></div>
+                        </div>
+                        <div id="integrityStatus"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decrypt Tab -->
+        <div id="tab-decrypt" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🔓</div>
+                    <div>
+                        <h2 class="card-title">Full Decryption View</h2>
+                        <p class="card-step">With Hash Comparison</p>
+                    </div>
+                </div>
+                <div class="grid-2">
+                    <div>
+                        <div class="form-group">
+                            <label>Encrypted Packet</label>
+                            <textarea id="encryptedInput2" rows="4" placeholder="Paste encrypted packet..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>2FA Code</label>
+                            <input type="text" id="totpCode2" placeholder="Optional">
+                        </div>
+                        <button class="btn btn-primary" onclick="decryptFull()">
+                            <span>🔓</span> Decrypt & Analyze
+                        </button>
+                    </div>
+                    <div id="fullDecryptOutput">
+                        <p style="color: var(--text-secondary);">Results will appear here...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signature Tab -->
+        <div id="tab-signature" class="tab-content">
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon gold">✍️</div>
+                        <div>
+                            <h2 class="card-title">Sign Message</h2>
+                            <p class="card-step">RSA-PSS SHA-256</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea id="signMessageInput" rows="3" placeholder="Message to sign..."></textarea>
+                    </div>
+                    <button class="btn btn-gold" onclick="signMessage()">✍️ Sign</button>
+                    <div id="signOutput" style="display: none;">
+                        <div class="output-box" style="margin-top: 10px;">
+                            <span class="output-label">Signature</span>
+                            <div style="color: var(--accent-warning);" id="signatureDisplay"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon gold">✅</div>
+                        <div>
+                            <h2 class="card-title">Verify Signature</h2>
+                            <p class="card-step">Authenticate Origin</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea id="verifyMessageInput" rows="2" placeholder="Original message..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Signature</label>
+                        <textarea id="verifySignatureInput" rows="2" placeholder="Signature..."></textarea>
+                    </div>
+                    <button class="btn btn-gold" onclick="verifySignature()">🔍 Verify</button>
+                    <div id="verifyOutput"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2FA Tab -->
+        <div id="tab-2fa" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon danger">🔐</div>
+                    <div>
+                        <h2 class="card-title">Two-Factor Authentication</h2>
+                        <p class="card-step">TOTP - Google Authenticator Compatible</p>
+                    </div>
+                </div>
+                <button class="btn btn-danger" onclick="loadTOTP()">🔄 Load 2FA</button>
+                <div id="totpInfo" style="display: none; margin-top: 15px;">
+                    <div class="output-box">
+                        <span class="output-label">Secret Key</span>
+                        <div id="totpSecret" style="color: var(--accent-warning);"></div>
+                    </div>
+                    <div
+                        style="text-align: center; margin: 15px 0; padding: 15px; background: rgba(255,165,2,0.1); border-radius: 8px;">
+                        <div style="font-size: 2.5rem; font-weight: 700; letter-spacing: 8px; color: var(--accent-warning);"
+                            id="currentTOTP">------</div>
+                        <p style="color: var(--text-secondary); font-size: 0.75rem; margin-top: 5px;">Current Code</p>
+                    </div>
+                    <button class="btn btn-secondary" onclick="refreshTOTP()">🔄 Refresh</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="tab-history" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📜</div>
+                    <div>
+                        <h2 class="card-title">Message History</h2>
+                        <p class="card-step">Persistent Storage</p>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="loadHistory()">🔄 Refresh</button>
+                <button class="btn btn-danger" onclick="clearHistory()">🗑️ Clear</button>
+                <div id="historyList" style="margin-top: 15px;"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>🛡️ Secure Messaging v5.0 — Protected Security with Real-Time Refresh</p>
+        <p style="font-size: 0.7rem; margin-top: 5px;">🔒 Your data is protected with military-grade encryption</p>
+    </footer>
+
+    <script>
+        // ===== THREE.JS 3D ANIMATION =====
+        let scene, camera, renderer;
+        let particles = [];
+        let dataPackets = [];
+        let animationPaused = false;
+
+        function initThreeJS() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x000000, 0);
+            document.getElementById('threejs-container').appendChild(renderer.domElement);
+
+            // Create floating particles (representing data)
+            const geometry = new THREE.SphereGeometry(0.05, 8, 8);
+
+            for (let i = 0; i < 150; i++) {
+                const material = new THREE.MeshBasicMaterial({
+                    color: Math.random() > 0.5 ? 0xff3b3b : 0xff6b6b,
+                    transparent: true,
+                    opacity: 0.6
+                });
+                const particle = new THREE.Mesh(geometry, material);
+                particle.position.x = (Math.random() - 0.5) * 30;
+                particle.position.y = (Math.random() - 0.5) * 30;
+                particle.position.z = (Math.random() - 0.5) * 30;
+                particle.userData = {
+                    speedX: (Math.random() - 0.5) * 0.02,
+                    speedY: (Math.random() - 0.5) * 0.02,
+                    speedZ: (Math.random() - 0.5) * 0.02
+                };
+                particles.push(particle);
+                scene.add(particle);
+            }
+
+            // Create Hexagonal Shield (center)
+            const hexGroup = new THREE.Group();
+            for (let i = 0; i < 6; i++) {
+                const hexGeometry = new THREE.RingGeometry(2.5, 2.8, 6);
+                const hexMaterial = new THREE.MeshBasicMaterial({
+                    color: 0xff3b3b,
+                    transparent: true,
+                    opacity: 0.4,
+                    side: THREE.DoubleSide
+                });
+                const hex = new THREE.Mesh(hexGeometry, hexMaterial);
+                hex.rotation.z = (Math.PI / 3) * i;
+                hex.position.z = i * 0.3 - 0.9;
+                hexGroup.add(hex);
+            }
+            hexGroup.userData = { type: 'shield', pulsePhase: 0 };
+            scene.add(hexGroup);
+            particles.push(hexGroup);
+
+            // Create DNA Helix
+            const helixGroup = new THREE.Group();
+            const helixPoints1 = [];
+            const helixPoints2 = [];
+            for (let t = 0; t < Math.PI * 4; t += 0.2) {
+                helixPoints1.push(new THREE.Vector3(Math.cos(t) * 1.5, t - 6, Math.sin(t) * 1.5));
+                helixPoints2.push(new THREE.Vector3(Math.cos(t + Math.PI) * 1.5, t - 6, Math.sin(t + Math.PI) * 1.5));
+            }
+
+            const helixCurve1 = new THREE.CatmullRomCurve3(helixPoints1);
+            const helixCurve2 = new THREE.CatmullRomCurve3(helixPoints2);
+            const tubeGeometry1 = new THREE.TubeGeometry(helixCurve1, 64, 0.08, 8, false);
+            const tubeGeometry2 = new THREE.TubeGeometry(helixCurve2, 64, 0.08, 8, false);
+            const helixMaterial = new THREE.MeshBasicMaterial({ color: 0xff6b6b, transparent: true, opacity: 0.6 });
+
+            const helix1 = new THREE.Mesh(tubeGeometry1, helixMaterial);
+            const helix2 = new THREE.Mesh(tubeGeometry2, helixMaterial);
+            helixGroup.add(helix1, helix2);
+
+            // Add connecting bars
+            for (let t = 0; t < Math.PI * 4; t += 0.6) {
+                const barGeometry = new THREE.CylinderGeometry(0.03, 0.03, 3, 8);
+                const barMaterial = new THREE.MeshBasicMaterial({ color: 0xff0844, transparent: true, opacity: 0.4 });
+                const bar = new THREE.Mesh(barGeometry, barMaterial);
+                bar.position.set(0, t - 6, 0);
+                bar.rotation.z = Math.PI / 2;
+                bar.rotation.y = t;
+                helixGroup.add(bar);
+            }
+
+            helixGroup.position.x = 8;
+            helixGroup.userData = { type: 'helix', rotationSpeed: 0.01 };
+            scene.add(helixGroup);
+            particles.push(helixGroup);
+
+            // Create Security Core (pulsing center)
+            const coreGeometry = new THREE.IcosahedronGeometry(0.8, 1);
+            const coreMaterial = new THREE.MeshBasicMaterial({
+                color: 0xff3b3b,
+                transparent: true,
+                opacity: 0.8,
+                wireframe: true
+            });
+            const core = new THREE.Mesh(coreGeometry, coreMaterial);
+            core.userData = { type: 'core', pulsePhase: 0 };
+            scene.add(core);
+            particles.push(core);
+
+            // Create orbiting rings
+            for (let i = 0; i < 3; i++) {
+                const orbitGeometry = new THREE.TorusGeometry(3 + i * 1.2, 0.03, 16, 100);
+                const orbitMaterial = new THREE.MeshBasicMaterial({
+                    color: i === 0 ? 0xff3b3b : i === 1 ? 0xff6b6b : 0xff0844,
+                    transparent: true,
+                    opacity: 0.3
+                });
+                const orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
+                orbit.rotation.x = Math.PI / 2 + (i * 0.3);
+                orbit.rotation.y = i * 0.5;
+                orbit.userData = { type: 'orbit', rotationSpeed: 0.005 * (i + 1), axis: i };
+                scene.add(orbit);
+                particles.push(orbit);
+            }
+
+            camera.position.z = 15;
+
+            animate();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (!animationPaused) {
+                particles.forEach(p => {
+                    // Regular particles
+                    if (p.userData.speedX) {
+                        p.position.x += p.userData.speedX;
+                        p.position.y += p.userData.speedY;
+                        p.position.z += p.userData.speedZ;
+
+                        // Wrap around
+                        if (p.position.x > 15) p.position.x = -15;
+                        if (p.position.x < -15) p.position.x = 15;
+                        if (p.position.y > 15) p.position.y = -15;
+                        if (p.position.y < -15) p.position.y = 15;
+                        if (p.position.z > 15) p.position.z = -15;
+                        if (p.position.z < -15) p.position.z = 15;
+                    }
+
+                    // Hexagonal Shield - pulse and rotate
+                    if (p.userData.type === 'shield') {
+                        p.userData.pulsePhase += 0.02;
+                        const scale = 1 + Math.sin(p.userData.pulsePhase) * 0.1;
+                        p.scale.set(scale, scale, scale);
+                        p.rotation.z += 0.003;
+                    }
+
+                    // DNA Helix - rotate
+                    if (p.userData.type === 'helix') {
+                        p.rotation.y += p.userData.rotationSpeed;
+                    }
+
+                    // Security Core - pulse and rotate
+                    if (p.userData.type === 'core') {
+                        p.userData.pulsePhase += 0.03;
+                        const coreScale = 1 + Math.sin(p.userData.pulsePhase) * 0.2;
+                        p.scale.set(coreScale, coreScale, coreScale);
+                        p.rotation.x += 0.01;
+                        p.rotation.y += 0.015;
+                    }
+
+                    // Orbiting rings
+                    if (p.userData.type === 'orbit') {
+                        if (p.userData.axis === 0) p.rotation.x += p.userData.rotationSpeed;
+                        else if (p.userData.axis === 1) p.rotation.y += p.userData.rotationSpeed;
+                        else p.rotation.z += p.userData.rotationSpeed;
+                    }
+
+                    // Regular rotation
+                    if (p.userData.rotationSpeed && !p.userData.type) {
+                        p.rotation.z += p.userData.rotationSpeed;
+                    }
+                });
+
+                // Animate data packets
+                dataPackets.forEach((packet, i) => {
+                    packet.position.z += 0.1;
+                    packet.rotation.x += 0.05;
+                    packet.rotation.y += 0.05;
+                    if (packet.position.z > 20) {
+                        scene.remove(packet);
+                        dataPackets.splice(i, 1);
+                    }
+                });
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        function createDataPacket(color = 0x00ff88) {
+            const geometry = new THREE.BoxGeometry(0.3, 0.3, 0.3);
+            const material = new THREE.MeshBasicMaterial({
+                color: color,
+                transparent: true,
+                opacity: 0.8
+            });
+            const packet = new THREE.Mesh(geometry, material);
+            packet.position.set(0, 0, -10);
+            scene.add(packet);
+            dataPackets.push(packet);
+        }
+
+        function triggerEncryptionAnimation() {
+            document.getElementById('animation-status').style.display = 'block';
+
+            const steps = ['step-key', 'step-hash', 'step-aes', 'step-rsa', 'step-send'];
+            let currentStep = 0;
+
+            // Reset all steps
+            steps.forEach(s => {
+                document.getElementById(s).classList.remove('active', 'done');
+            });
+
+            const interval = setInterval(() => {
+                if (currentStep > 0) {
+                    document.getElementById(steps[currentStep - 1]).classList.remove('active');
+                    document.getElementById(steps[currentStep - 1]).classList.add('done');
+                }
+
+                if (currentStep < steps.length) {
+                    document.getElementById(steps[currentStep]).classList.add('active');
+                    createDataPacket(currentStep === 4 ? 0x00ff88 : 0x00d4ff);
+                    currentStep++;
+                } else {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.getElementById('animation-status').style.display = 'none';
+                    }, 2000);
+                }
+            }, 500);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // ===== APP LOGIC =====
+        let keysGenerated = false;
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tabName).classList.add('active');
+        }
+
+        async function generateKeys() {
+            const btn = document.getElementById('generateBtn');
+            const password = document.getElementById('keyPassword').value;
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Generating...';
+
+            const res = await fetch('/api/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: password || null })
+            });
+            const data = await res.json();
+
+            if (data.status === 'success') {
+                keysGenerated = true;
+                document.getElementById('keyIndicator').classList.add('active');
+                document.getElementById('keyStatusText').textContent = 'RSA + AES + 2FA Active';
+                document.getElementById('encryptBtn').disabled = false;
+                document.getElementById('decryptBtn').disabled = false;
+                btn.innerHTML = '✅ Keys Ready';
+
+                // Trigger 3D animation
+                for (let i = 0; i < 10; i++) {
+                    setTimeout(() => createDataPacket(0x00ff88), i * 100);
+                }
+            }
+        }
+
+        async function encryptMessage() {
+            const message = document.getElementById('messageInput').value;
+            const hashAlgo = document.getElementById('hashAlgoEncrypt').value;
+            const expiry = document.getElementById('expiryMinutes').value;
+            if (!message) return alert('Enter a message');
+
+            // Trigger 3D animation
+            triggerEncryptionAnimation();
+
+            const res = await fetch('/api/encrypt', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message,
+                    hash_algorithm: hashAlgo,
+                    expiry_minutes: expiry > 0 ? expiry : null,
+                    hybrid: true
+                })
+            });
+            const data = await res.json();
+
+            if (data.status === 'success') {
+                document.getElementById('hashDisplay').textContent = `${data.hash} (${data.hash_algorithm.toUpperCase()})`;
+                document.getElementById('encryptedDisplay').textContent = data.encrypted_packet;
+                document.getElementById('encryptOutput').style.display = 'block';
+                document.getElementById('encryptedInput').value = data.encrypted_packet;
+            } else {
+                alert(data.error);
+            }
+        }
+
+        async function decryptMessage() {
+            const encrypted = document.getElementById('encryptedInput').value;
+            const totpCode = document.getElementById('totpCodeDecrypt').value;
+            if (!encrypted) return alert('Enter encrypted data');
+
+            const res = await fetch('/api/decrypt', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ encrypted, totp_code: totpCode || null })
+            });
+            const data = await res.json();
+
+            if (data.error) {
+                document.getElementById('decryptedDisplay').textContent = 'ERROR: ' + data.error;
+                document.getElementById('integrityStatus').innerHTML = '<div class="status status-error">❌ Failed</div>';
+            } else {
+                document.getElementById('decryptedDisplay').textContent = data.message;
+                document.getElementById('integrityStatus').innerHTML = data.integrity_ok
+                    ? '<div class="status status-success">✅ Verified</div>'
+                    : '<div class="status status-error">⚠️ Integrity Failed</div>';
+            }
+            document.getElementById('decryptOutput').style.display = 'block';
+        }
+
+        async function decryptFull() {
+            const encrypted = document.getElementById('encryptedInput2').value;
+            const totpCode = document.getElementById('totpCode2').value;
+            if (!encrypted) return alert('Enter encrypted data');
+
+            const res = await fetch('/api/decrypt', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ encrypted, totp_code: totpCode || null })
+            });
+            const data = await res.json();
+
+            const output = document.getElementById('fullDecryptOutput');
+            if (data.error) {
+                output.innerHTML = `<div class="status status-error">❌ ${data.error}</div>`;
+            } else {
+                output.innerHTML = `
+                    <div class="output-box"><span class="output-label">Message</span>
+                        <div style="color: var(--accent-success);">${data.message}</div>
+                    </div>
+                    <div class="comparison" style="margin-top: 10px;">
+                        <div class="comparison-item">
+                            <div class="comparison-label">Calculated</div>
+                            <div class="comparison-value">${data.calculated_hash}</div>
+                        </div>
+                        <div class="comparison-item">
+                            <div class="comparison-label">Received</div>
+                            <div class="comparison-value">${data.received_hash}</div>
+                        </div>
+                    </div>
+                    ${data.integrity_ok
+                        ? '<div class="status status-success" style="margin-top: 10px;">✅ Integrity Verified</div>'
+                        : '<div class="status status-error" style="margin-top: 10px;">⚠️ Integrity Failed</div>'}
+                `;
+            }
+        }
+
+        async function signMessage() {
+            const message = document.getElementById('signMessageInput').value;
+            if (!message) return alert('Enter a message');
+
+            const res = await fetch('/api/sign', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message })
+            });
+            const data = await res.json();
+
+            if (data.status === 'success') {
+                document.getElementById('signatureDisplay').textContent = data.signature;
+                document.getElementById('signOutput').style.display = 'block';
+                document.getElementById('verifyMessageInput').value = message;
+                document.getElementById('verifySignatureInput').value = data.signature;
+            }
+        }
+
+        async function verifySignature() {
+            const message = document.getElementById('verifyMessageInput').value;
+            const signature = document.getElementById('verifySignatureInput').value;
+            if (!message || !signature) return alert('Enter both');
+
+            const res = await fetch('/api/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message, signature })
+            });
+            const data = await res.json();
+
+            document.getElementById('verifyOutput').innerHTML = data.is_valid
+                ? '<div class="status status-success" style="margin-top: 10px;">✅ Valid</div>'
+                : '<div class="status status-error" style="margin-top: 10px;">❌ Invalid</div>';
+        }
+
+        async function loadTOTP() {
+            const res = await fetch('/api/totp');
+            const data = await res.json();
+            if (data.error) return alert('Generate keys first');
+
+            document.getElementById('totpSecret').textContent = data.secret;
+            document.getElementById('currentTOTP').textContent = data.current_code;
+            document.getElementById('totpInfo').style.display = 'block';
+        }
+
+        async function refreshTOTP() {
+            const res = await fetch('/api/totp');
+            const data = await res.json();
+            if (data.current_code) {
+                document.getElementById('currentTOTP').textContent = data.current_code;
+            }
+        }
+
+        async function loadHistory() {
+            const res = await fetch('/api/history');
+            const data = await res.json();
+
+            const list = document.getElementById('historyList');
+            if (!data.history || data.history.length === 0) {
+                list.innerHTML = '<p style="color: var(--text-secondary);">No history yet.</p>';
+                return;
+            }
+
+            list.innerHTML = data.history.map(item => `
+                <div class="history-item ${item.type}">
+                    <strong>${item.type === 'encrypt' ? '🔒 Encrypted' : item.type === 'sign' ? '✍️ Signed' : '🔓 Decrypted'}</strong>
+                    <span class="history-time">${item.timestamp}</span>
+                    <div style="margin-top: 5px; color: var(--text-secondary); font-size: 0.75rem;">
+                        ${item.hash ? `Hash: ${item.hash.substring(0, 24)}...` : ''}
+                        ${item.encryption ? ` | ${item.encryption}` : ''}
+                    </div>
+                </div>
+            `).reverse().join('');
+        }
+
+        async function clearHistory() {
+            if (confirm('Clear all history?')) {
+                await fetch('/api/history/clear', { method: 'POST' });
+                loadHistory();
+            }
+        }
+
+        // Refresh App Function
+        function refreshApp() {
+            const btn = document.querySelector('.refresh-btn');
+            btn.innerHTML = '⏳ Refreshing...';
+            btn.style.pointerEvents = 'none';
+
+            // Reload history
+            loadHistory();
+
+            // Refresh TOTP if available
+            refreshTOTP();
+
+            // Visual feedback
+            setTimeout(() => {
+                btn.innerHTML = '✅ Refreshed!';
+
+                // Create burst animation
+                for (let i = 0; i < 20; i++) {
+                    setTimeout(() => createDataPacket(0xff3b3b), i * 50);
+                }
+
+                setTimeout(() => {
+                    btn.innerHTML = '🔄 Refresh';
+                    btn.style.pointerEvents = 'auto';
+                }, 1500);
+            }, 500);
+        }
+
+        // Initialize
+        initThreeJS();
+        setInterval(refreshTOTP, 30000);
+
+        // Security Score Update
+        async function updateSecurityScore() {
+            try {
+                const res = await fetch('/api/security-score');
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    const percentage = data.percentage;
+                    const scoreCircle = document.getElementById('scoreCircle');
+                    const scoreValue = document.getElementById('scoreValue');
+
+                    // Update score display
+                    scoreValue.textContent = percentage;
+
+                    // Update circle gradient
+                    const degrees = (percentage / 100) * 360;
+                    scoreCircle.style.background = `conic-gradient(var(--accent-primary) ${degrees}deg, rgba(0,0,0,0.3) ${degrees}deg)`;
+
+                    // Update icons
+                    document.getElementById('keysIcon').textContent = data.details.keys_generated ? '✅' : '❌';
+                    document.getElementById('tfaIcon').textContent = data.details['2fa_enabled'] ? '✅' : '❌';
+                    document.getElementById('passwordIcon').textContent = data.details.password_protected ? '✅' : '❌';
+                    document.getElementById('aesIcon').textContent = data.details.aes_ready ? '✅' : '❌';
+                }
+            } catch (e) {
+                console.log('Security score fetch failed:', e);
+            }
+        }
+
+        // Initial load
+        updateSecurityScore();
+
+        // Auto-refresh every 60 seconds
+        setInterval(() => {
+            loadHistory();
+            updateSecurityScore();
+        }, 60000);
+
+        // Copy to Clipboard Function
+        function copyToClipboard(elementId, button) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+
+            navigator.clipboard.writeText(text).then(() => {
+                // Show toast
+                showToast('📋 Copied to clipboard!');
+
+                // Update button
+                button.textContent = '✅ Copied!';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.textContent = '📋 Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                showToast('❌ Copy failed');
+            });
+        }
+
+        // Toast Notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Keyboard Shortcuts Modal
+        function showKeyboardShortcuts() {
+            document.getElementById('shortcutsModal').classList.add('show');
+        }
+
+        function closeShortcutsModal(event) {
+            if (!event || event.target.id === 'shortcutsModal') {
+                document.getElementById('shortcutsModal').classList.remove('show');
+            }
+        }
+
+        // Keyboard Event Listener
+        document.addEventListener('keydown', (e) => {
+            // Show shortcuts with ?
+            if (e.key === '?') {
+                showKeyboardShortcuts();
+                return;
+            }
+
+            // Close modal with Escape
+            if (e.key === 'Escape') {
+                closeShortcutsModal();
+                return;
+            }
+
+            // Ctrl shortcuts
+            if (e.ctrlKey) {
+                switch (e.key.toLowerCase()) {
+                    case 'g':
+                        e.preventDefault();
+                        generateKeys();
+                        showToast('⚡ Generating keys...');
+                        break;
+                    case 'e':
+                        if (!e.shiftKey) {
+                            e.preventDefault();
+                            if (keysGenerated) {
+                                encryptMessage();
+                                showToast('🔒 Encrypting...');
+                            } else {
+                                showToast('⚠️ Generate keys first!');
+                            }
+                        }
+                        break;
+                    case 'd':
+                        e.preventDefault();
+                        if (keysGenerated) {
+                            decryptMessage();
+                            showToast('🔓 Decrypting...');
+                        } else {
+                            showToast('⚠️ Generate keys first!');
+                        }
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
