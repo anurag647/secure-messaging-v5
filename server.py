@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify, session, send_from_directory
 import base64
 import hashlib
 import json
@@ -479,6 +479,10 @@ def rate_limit(f):
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/images/<path:filename>')
+def serve_image(filename):
+    return send_from_directory('templates', filename)
 
 @app.route('/api/generate', methods=['POST'])
 @rate_limit
