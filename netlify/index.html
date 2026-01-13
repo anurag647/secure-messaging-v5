@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 SecureMsg Pro | Military-Grade Encryption</title>
+    <meta name="description" content="Military-grade encryption with RSA-2048 + AES-256 + MD5 integrity verification">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --accent: #f43f5e;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --bg-dark: #0f0f17;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --border: rgba(99, 102, 241, 0.2);
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            min-height: 100vh;
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
+                radial-gradient(ellipse at 20% 80%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(244, 63, 94, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            25% {
+                transform: translate(2%, 2%) rotate(1deg);
+            }
+
+            50% {
+                transform: translate(-1%, 3%) rotate(-1deg);
+            }
+
+            75% {
+                transform: translate(-2%, 1%) rotate(0.5deg);
+            }
+        }
+
+        /* Grid Pattern */
+        .grid-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 50px 0 40px;
+        }
+
+        .logo-container {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.4);
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                box-shadow: 0 10px 40px rgba(99, 102, 241, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 10px 60px rgba(99, 102, 241, 0.6);
+            }
+        }
+
+        .logo-text {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 50%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        .tagline {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+        }
+
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            color: var(--text);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .badge:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .badge-icon {
+            font-size: 1rem;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+            animation: status-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes status-pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .logo-text {
+                font-size: 2rem;
+            }
+
+            header {
+                padding: 30px 0;
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(99, 102, 241, 0.15);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .card-icon.encrypt {
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.2), rgba(244, 63, 94, 0.1));
+            color: var(--accent);
+        }
+
+        .card-icon.decrypt {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));
+            color: var(--success);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .card-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Form Elements */
+        textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            resize: vertical;
+            min-height: 120px;
+            transition: all 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+            margin-top: 16px;
+        }
+
+        .btn-encrypt {
+            background: linear-gradient(135deg, var(--accent), #e11d48);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(244, 63, 94, 0.3);
+        }
+
+        .btn-encrypt:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(244, 63, 94, 0.5);
+        }
+
+        .btn-decrypt {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-decrypt:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.5);
+        }
+
+        /* Output */
+        .output {
+            margin-top: 20px;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            display: none;
+        }
+
+        .output.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .output-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .output-text {
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.85rem;
+            word-break: break-all;
+            max-height: 100px;
+            overflow-y: auto;
+            color: var(--accent);
+            line-height: 1.5;
+        }
+
+        .output-text.success {
+            color: var(--success);
+        }
+
+        .hash-display {
+            margin-top: 12px;
+            padding: 10px;
+            background: rgba(245, 158, 11, 0.1);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: var(--warning);
+            font-family: monospace;
+        }
+
+        .copy-btn {
+            margin-top: 12px;
+            padding: 10px 16px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        /* Status Messages */
+        .status-message {
+            margin-top: 16px;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .status-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--success);
+        }
+
+        .status-error {
+            background: rgba(244, 63, 94, 0.1);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            color: var(--accent);
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Security Features Strip */
+        .security-strip {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+            padding: 20px;
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .security-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .security-item span:first-child {
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-animation"></div>
+    <div class="grid-pattern"></div>
+
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <div class="logo-icon">🔐</div>
+                <h1 class="logo-text">SecureMsg Pro</h1>
+            </div>
+            <p class="tagline">Military-Grade End-to-End Encryption for Your Messages</p>
+            <div class="badges">
+                <span class="badge"><span class="badge-icon">🛡️</span> RSA-2048</span>
+                <span class="badge"><span class="badge-icon">🔒</span> AES-256-GCM</span>
+                <span class="badge"><span class="badge-icon">✓</span> MD5 Integrity</span>
+                <span class="badge"><span class="badge-icon">⚡</span> Zero-Knowledge</span>
+            </div>
+        </header>
+
+        <div class="status-bar" id="keyStatus">
+            <div class="status-dot"></div>
+            <span>Initializing encryption keys...</span>
+        </div>
+
+        <div class="main-grid">
+            <!-- Encrypt Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon encrypt">🔒</div>
+                    <div>
+                        <h2 class="card-title">Encrypt Message</h2>
+                        <p class="card-subtitle">Transform your message into secure cipher</p>
+                    </div>
+                </div>
+
+                <textarea id="messageInput" placeholder="Enter your secret message here..."></textarea>
+                <button class="btn btn-encrypt" onclick="encryptMessage()">
+                    <span>🔒</span> Encrypt Now
+                </button>
+
+                <div id="encryptLoading" class="loading">
+                    <div class="spinner"></div>
+                    <span>Encrypting your message...</span>
+                </div>
+
+                <div id="encryptOutput" class="output">
+                    <span class="output-label">📦 Encrypted Packet</span>
+                    <div class="output-text" id="encryptedText"></div>
+                    <div class="hash-display" id="hashText"></div>
+                    <button class="copy-btn" onclick="copyEncrypted()">📋 Copy to Clipboard</button>
+                </div>
+            </div>
+
+            <!-- Decrypt Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon decrypt">🔓</div>
+                    <div>
+                        <h2 class="card-title">Decrypt Message</h2>
+                        <p class="card-subtitle">Reveal the original message content</p>
+                    </div>
+                </div>
+
+                <textarea id="encryptedInput" placeholder="Paste encrypted packet here..."
+                    onpaste="autoDecrypt(event)"></textarea>
+                <button class="btn btn-decrypt" onclick="decryptMessage()">
+                    <span>🔓</span> Decrypt Now
+                </button>
+
+                <div id="decryptLoading" class="loading">
+                    <div class="spinner"></div>
+                    <span>Decrypting message...</span>
+                </div>
+
+                <div id="decryptOutput" class="output">
+                    <span class="output-label">💬 Decrypted Message</span>
+                    <div class="output-text success" id="decryptedText"></div>
+                    <div id="integrityStatus"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="security-strip">
+            <div class="security-item"><span>🔐</span> End-to-End Encryption</div>
+            <div class="security-item"><span>🚫</span> No Data Storage</div>
+            <div class="security-item"><span>⚡</span> Real-time Processing</div>
+            <div class="security-item"><span>🌐</span> Works Offline</div>
+        </div>
+
+        <footer>
+            <p>🔐 SecureMsg Pro | Military-Grade Encryption</p>
+            <p style="margin-top: 8px; opacity: 0.7;">All encryption happens locally in your browser. We never see your
+                messages.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Crypto keys
+        let keyPair = null;
+        let aesKey = null;
+
+        // MD5 Implementation
+        function md5(string) {
+            function md5cycle(x, k) {
+                var a = x[0], b = x[1], c = x[2], d = x[3];
+                a = ff(a, b, c, d, k[0], 7, -680876936);
+                d = ff(d, a, b, c, k[1], 12, -389564586);
+                c = ff(c, d, a, b, k[2], 17, 606105819);
+                b = ff(b, c, d, a, k[3], 22, -1044525330);
+                a = ff(a, b, c, d, k[4], 7, -176418897);
+                d = ff(d, a, b, c, k[5], 12, 1200080426);
+                c = ff(c, d, a, b, k[6], 17, -1473231341);
+                b = ff(b, c, d, a, k[7], 22, -45705983);
+                a = ff(a, b, c, d, k[8], 7, 1770035416);
+                d = ff(d, a, b, c, k[9], 12, -1958414417);
+                c = ff(c, d, a, b, k[10], 17, -42063);
+                b = ff(b, c, d, a, k[11], 22, -1990404162);
+                a = ff(a, b, c, d, k[12], 7, 1804603682);
+                d = ff(d, a, b, c, k[13], 12, -40341101);
+                c = ff(c, d, a, b, k[14], 17, -1502002290);
+                b = ff(b, c, d, a, k[15], 22, 1236535329);
+                a = gg(a, b, c, d, k[1], 5, -165796510);
+                d = gg(d, a, b, c, k[6], 9, -1069501632);
+                c = gg(c, d, a, b, k[11], 14, 643717713);
+                b = gg(b, c, d, a, k[0], 20, -373897302);
+                a = gg(a, b, c, d, k[5], 5, -701558691);
+                d = gg(d, a, b, c, k[10], 9, 38016083);
+                c = gg(c, d, a, b, k[15], 14, -660478335);
+                b = gg(b, c, d, a, k[4], 20, -405537848);
+                a = gg(a, b, c, d, k[9], 5, 568446438);
+                d = gg(d, a, b, c, k[14], 9, -1019803690);
+                c = gg(c, d, a, b, k[3], 14, -187363961);
+                b = gg(b, c, d, a, k[8], 20, 1163531501);
+                a = gg(a, b, c, d, k[13], 5, -1444681467);
+                d = gg(d, a, b, c, k[2], 9, -51403784);
+                c = gg(c, d, a, b, k[7], 14, 1735328473);
+                b = gg(b, c, d, a, k[12], 20, -1926607734);
+                a = hh(a, b, c, d, k[5], 4, -378558);
+                d = hh(d, a, b, c, k[8], 11, -2022574463);
+                c = hh(c, d, a, b, k[11], 16, 1839030562);
+                b = hh(b, c, d, a, k[14], 23, -35309556);
+                a = hh(a, b, c, d, k[1], 4, -1530992060);
+                d = hh(d, a, b, c, k[4], 11, 1272893353);
+                c = hh(c, d, a, b, k[7], 16, -155497632);
+                b = hh(b, c, d, a, k[10], 23, -1094730640);
+                a = hh(a, b, c, d, k[13], 4, 681279174);
+                d = hh(d, a, b, c, k[0], 11, -358537222);
+                c = hh(c, d, a, b, k[3], 16, -722521979);
+                b = hh(b, c, d, a, k[6], 23, 76029189);
+                a = hh(a, b, c, d, k[9], 4, -640364487);
+                d = hh(d, a, b, c, k[12], 11, -421815835);
+                c = hh(c, d, a, b, k[15], 16, 530742520);
+                b = hh(b, c, d, a, k[2], 23, -995338651);
+                a = ii(a, b, c, d, k[0], 6, -198630844);
+                d = ii(d, a, b, c, k[7], 10, 1126891415);
+                c = ii(c, d, a, b, k[14], 15, -1416354905);
+                b = ii(b, c, d, a, k[5], 21, -57434055);
+                a = ii(a, b, c, d, k[12], 6, 1700485571);
+                d = ii(d, a, b, c, k[3], 10, -1894986606);
+                c = ii(c, d, a, b, k[10], 15, -1051523);
+                b = ii(b, c, d, a, k[1], 21, -2054922799);
+                a = ii(a, b, c, d, k[8], 6, 1873313359);
+                d = ii(d, a, b, c, k[15], 10, -30611744);
+                c = ii(c, d, a, b, k[6], 15, -1560198380);
+                b = ii(b, c, d, a, k[13], 21, 1309151649);
+                a = ii(a, b, c, d, k[4], 6, -145523070);
+                d = ii(d, a, b, c, k[11], 10, -1120210379);
+                c = ii(c, d, a, b, k[2], 15, 718787259);
+                b = ii(b, c, d, a, k[9], 21, -343485551);
+                x[0] = add32(a, x[0]);
+                x[1] = add32(b, x[1]);
+                x[2] = add32(c, x[2]);
+                x[3] = add32(d, x[3]);
+            }
+            function cmn(q, a, b, x, s, t) {
+                a = add32(add32(a, q), add32(x, t));
+                return add32((a << s) | (a >>> (32 - s)), b);
+            }
+            function ff(a, b, c, d, x, s, t) { return cmn((b & c) | ((~b) & d), a, b, x, s, t); }
+            function gg(a, b, c, d, x, s, t) { return cmn((b & d) | (c & (~d)), a, b, x, s, t); }
+            function hh(a, b, c, d, x, s, t) { return cmn(b ^ c ^ d, a, b, x, s, t); }
+            function ii(a, b, c, d, x, s, t) { return cmn(c ^ (b | (~d)), a, b, x, s, t); }
+            function md5blk(s) {
+                var md5blks = [], i;
+                for (i = 0; i < 64; i += 4) {
+                    md5blks[i >> 2] = s.charCodeAt(i) + (s.charCodeAt(i + 1) << 8) + (s.charCodeAt(i + 2) << 16) + (s.charCodeAt(i + 3) << 24);
+                }
+                return md5blks;
+            }
+            function md51(s) {
+                var n = s.length, state = [1732584193, -271733879, -1732584194, 271733878], i, length, tail, tmp, lo, hi;
+                for (i = 64; i <= n; i += 64) { md5cycle(state, md5blk(s.substring(i - 64, i))); }
+                s = s.substring(i - 64);
+                length = s.length;
+                tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                for (i = 0; i < length; i++) { tail[i >> 2] |= s.charCodeAt(i) << ((i % 4) << 3); }
+                tail[i >> 2] |= 0x80 << ((i % 4) << 3);
+                if (i > 55) { md5cycle(state, tail); for (i = 0; i < 16; i++) tail[i] = 0; }
+                tmp = n * 8;
+                tmp = tmp.toString(16).match(/(.*?)(.{0,8})$/);
+                lo = parseInt(tmp[2], 16);
+                hi = parseInt(tmp[1], 16) || 0;
+                tail[14] = lo;
+                tail[15] = hi;
+                md5cycle(state, tail);
+                return state;
+            }
+            function rhex(n) {
+                var s = '', j;
+                for (j = 0; j < 4; j++) { s += hex_chr[(n >> (j * 8 + 4)) & 0x0F] + hex_chr[(n >> (j * 8)) & 0x0F]; }
+                return s;
+            }
+            function hex(x) { for (var i = 0; i < x.length; i++) { x[i] = rhex(x[i]); } return x.join(''); }
+            var hex_chr = '0123456789abcdef'.split('');
+            function add32(a, b) { return (a + b) & 0xFFFFFFFF; }
+            return hex(md51(string));
+        }
+
+        // Helper functions
+        function arrayBufferToBase64(buffer) {
+            const bytes = new Uint8Array(buffer);
+            let binary = '';
+            for (let i = 0; i < bytes.byteLength; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return btoa(binary);
+        }
+
+        function base64ToArrayBuffer(base64) {
+            const binary = atob(base64);
+            const bytes = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i++) {
+                bytes[i] = binary.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        // Initialize keys
+        async function initializeKeys() {
+            try {
+                keyPair = await window.crypto.subtle.generateKey(
+                    {
+                        name: "RSA-OAEP",
+                        modulusLength: 2048,
+                        publicExponent: new Uint8Array([1, 0, 1]),
+                        hash: "SHA-256"
+                    },
+                    true,
+                    ["encrypt", "decrypt"]
+                );
+
+                aesKey = await window.crypto.subtle.generateKey(
+                    { name: "AES-GCM", length: 256 },
+                    true,
+                    ["encrypt", "decrypt"]
+                );
+
+                document.getElementById('keyStatus').innerHTML = '<div class="status-dot"></div><span>✅ Secure | RSA-2048 + AES-256 Ready</span>';
+                document.getElementById('keyStatus').style.background = 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%)';
+            } catch (error) {
+                document.getElementById('keyStatus').innerHTML = '<span>❌ Key generation failed: ' + error.message + '</span>';
+                document.getElementById('keyStatus').style.background = 'rgba(244, 63, 94, 0.1)';
+                document.getElementById('keyStatus').style.borderColor = 'rgba(244, 63, 94, 0.3)';
+            }
+        }
+
+        window.onload = initializeKeys;
+
+        async function encryptMessage() {
+            const message = document.getElementById('messageInput').value;
+            if (!message) {
+                alert('Please enter a message to encrypt');
+                return;
+            }
+
+            if (!keyPair || !aesKey) {
+                alert('Keys not ready. Please refresh the page.');
+                return;
+            }
+
+            document.getElementById('encryptLoading').classList.add('show');
+            document.getElementById('encryptOutput').classList.remove('show');
+
+            try {
+                const msgHash = md5(message);
+                const timestamp = new Date().toISOString();
+                const payload = JSON.stringify({
+                    message: message,
+                    hash: msgHash,
+                    hash_algo: 'md5',
+                    timestamp: timestamp
+                });
+
+                const iv = window.crypto.getRandomValues(new Uint8Array(12));
+                const encoder = new TextEncoder();
+                const encrypted = await window.crypto.subtle.encrypt(
+                    { name: "AES-GCM", iv: iv },
+                    aesKey,
+                    encoder.encode(payload)
+                );
+
+                const exportedAesKey = await window.crypto.subtle.exportKey("raw", aesKey);
+                const encryptedAesKey = await window.crypto.subtle.encrypt(
+                    { name: "RSA-OAEP" },
+                    keyPair.publicKey,
+                    exportedAesKey
+                );
+
+                const packet = JSON.stringify({
+                    encrypted_key: arrayBufferToBase64(encryptedAesKey),
+                    encrypted_data: arrayBufferToBase64(iv) + ':' + arrayBufferToBase64(encrypted),
+                    encryption: "RSA-2048 + AES-256-GCM"
+                });
+
+                const finalPacket = btoa(packet);
+
+                document.getElementById('encryptLoading').classList.remove('show');
+                document.getElementById('encryptedText').textContent = finalPacket;
+                document.getElementById('hashText').textContent = '🔑 MD5 Hash: ' + msgHash;
+                document.getElementById('encryptOutput').classList.add('show');
+
+            } catch (e) {
+                document.getElementById('encryptLoading').classList.remove('show');
+                alert('Encryption error: ' + e.message);
+            }
+        }
+
+        async function decryptMessage() {
+            const encryptedInput = document.getElementById('encryptedInput').value;
+            if (!encryptedInput) {
+                alert('Please paste encrypted data');
+                return;
+            }
+
+            if (!keyPair || !aesKey) {
+                alert('Keys not ready. Please refresh the page.');
+                return;
+            }
+
+            document.getElementById('decryptLoading').classList.add('show');
+            document.getElementById('decryptOutput').classList.remove('show');
+
+            try {
+                const packet = JSON.parse(atob(encryptedInput));
+                const encryptedAesKey = base64ToArrayBuffer(packet.encrypted_key);
+                const decryptedAesKeyBuffer = await window.crypto.subtle.decrypt(
+                    { name: "RSA-OAEP" },
+                    keyPair.privateKey,
+                    encryptedAesKey
+                );
+
+                const decryptedAesKey = await window.crypto.subtle.importKey(
+                    "raw",
+                    decryptedAesKeyBuffer,
+                    { name: "AES-GCM", length: 256 },
+                    true,
+                    ["decrypt"]
+                );
+
+                const [ivB64, ciphertextB64] = packet.encrypted_data.split(':');
+                const iv = new Uint8Array(base64ToArrayBuffer(ivB64));
+                const ciphertext = base64ToArrayBuffer(ciphertextB64);
+
+                const decrypted = await window.crypto.subtle.decrypt(
+                    { name: "AES-GCM", iv: iv },
+                    decryptedAesKey,
+                    ciphertext
+                );
+
+                const decoder = new TextDecoder();
+                const payload = JSON.parse(decoder.decode(decrypted));
+                const calculatedHash = md5(payload.message);
+                const integrityOk = calculatedHash === payload.hash;
+
+                document.getElementById('decryptLoading').classList.remove('show');
+                document.getElementById('decryptedText').textContent = payload.message;
+                document.getElementById('integrityStatus').innerHTML = integrityOk
+                    ? '<div class="status-message status-success">✅ Integrity Verified (MD5 Match)</div>'
+                    : '<div class="status-message status-error">⚠️ Integrity Check Failed</div>';
+                document.getElementById('decryptOutput').classList.add('show');
+
+            } catch (e) {
+                document.getElementById('decryptLoading').classList.remove('show');
+                document.getElementById('decryptedText').textContent = 'ERROR: ' + e.message;
+                document.getElementById('decryptedText').style.color = 'var(--accent)';
+                document.getElementById('integrityStatus').innerHTML = '<div class="status-message status-error">❌ Decryption Failed</div>';
+                document.getElementById('decryptOutput').classList.add('show');
+            }
+        }
+
+        function autoDecrypt(event) {
+            const pastedData = event.clipboardData.getData('text');
+            setTimeout(() => {
+                const input = document.getElementById('encryptedInput');
+                if (pastedData && pastedData.trim()) {
+                    input.value = pastedData.trim();
+                }
+                if (input.value && input.value.trim().length > 10) {
+                    decryptMessage();
+                }
+            }, 50);
+        }
+
+        function copyEncrypted() {
+            const text = document.getElementById('encryptedText').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                btn.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    btn.textContent = '📋 Copy to Clipboard';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+
+</html>
